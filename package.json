@@ -21,6 +21,7 @@
     "bootstrap"
   ],
   "dependencies": {
+    "bootstrap-kit": "^0.4.1",
     "browserify": "^13.0.1",
     "coffeeify": "^2.0.1",
     "request": "^2.72.0"
