@@ -1,0 +1,25 @@
+{
+  "name": "bootstrap-kit-express",
+  "version": "0.0.0",
+  "description": "Express backend for bootstrap-kit.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kay-Uwe <kiwi@franka.dyndns.org> (Kiwi)",
+  "license": "MIT",
+  "devDependencies": {
+    "coffeeify": "^2.0.1",
+    "loophole": "^1.1.0"
+  },
+  "keywords": [
+    "bootstrap-kit", "express", "bootstrap"
+  ],
+  "dependencies": {
+    "browserify": "^13.0.1",
+    "request": "^2.72.0"
+  }
+}
