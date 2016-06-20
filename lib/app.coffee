@@ -33,6 +33,7 @@ class BootstrapKitExpressApp
         @app.use middleware
 
     @app.get '/frontend.js', (req, res) =>
+      console.log "get frontend.js: #{frontendJsFile}"
       if fs.existsSync frontendJsFile
         res.sendFile frontendJsFile
 
@@ -56,7 +57,6 @@ class BootstrapKitExpressApp
 
       if pkg.mainModule.frontend
         if typeof pkg.mainModule.frontend is 'string'
-          console.log pkg.mainModule
           script = pkg.mainModule.frontend
         else
           for id, mod of require.cache
@@ -65,6 +65,7 @@ class BootstrapKitExpressApp
               break
 
       if script?
+        console.log "include to frontend: #{script}"
         output += """
           bootstrapKitApp.loadPackage("#{pkg.name}", require("#{script}"));\n
         """
