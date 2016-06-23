@@ -4,10 +4,13 @@ browserify = require 'browserify'
 coffeeify  = require 'coffeeify'
 path       = require 'path'
 fs         = require 'fs'
+morgan     = require 'morgan'
 Package    = require './package'
 
-frontendJsFile = path.resolve(__dirname, '..', 'frontend.js')
-frontendCoffeeFile = path.resolve(__dirname, '..', 'frontend.coffee')
+dir = process.cwd()
+
+frontendJsFile = path.resolve(dir, 'frontend.js')
+frontendCoffeeFile = path.resolve(dir, 'frontend.coffee')
 
 if fs.existsSync frontendJsFile
   fs.unlinkSync frontendJsFile
@@ -18,6 +21,7 @@ if fs.existsSync frontendCoffeeFile
 # Public: BootstrapKitExpressFactory
 #
 class BootstrapKitExpressApp
+
   # Public: create a BootstrapKitExpress
   constructor: (app, opts={}) ->
     @app ?= express()
@@ -27,6 +31,9 @@ class BootstrapKitExpressApp
     @app.locals.host = host = opts.host or 'localhost'
     @app.locals.port = port = opts.port or 3001
     @app.locals.baseURL = baseURL = opts.baseURL or "http://#{host}:#{port}"
+
+    @app.use morgan 'combined'
+
 
     if opts.middleware
       for middleware in opts.middleware
@@ -50,7 +57,7 @@ class BootstrapKitExpressApp
 
   createFrontend: (callback) ->
     output = "baseURL = '#{@app.locals.baseURL}';\n"
-    output += """bootstrapKitApp = require("./lib/bootstrap-kit-app.coffee")(baseURL);\n"""
+    output += """bootstrapKitApp = require("#{__dirname}/bootstrap-kit-app.coffee")(baseURL);\n"""
 
     for pkg in @packages
       script = null
@@ -86,8 +93,9 @@ class BootstrapKitExpressApp
 
     bundle.add frontendCoffeeFile
 
+    console.log "create bundle"
+
     bundle.bundle (error, result) ->
-#      fs.unlinkSync frontendCoffeeFile
       callback error, result
 
   listen: ->
@@ -116,14 +124,25 @@ class BootstrapKitExpressApp
   #   * `mainModule`
   #
   # TODO: manage server-side serialization
-  loadPackage: (pkg) ->
+  loadPackage: (args...) ->
+    if typeof args[0] is 'string'
+      pkg = new Package mountpoint: args[0], mainModule: args[1], name: args[1].name
+    else
+      pkg = args[0]
+
     unless pkg instanceof Package
       pkg = new Package pkg
 
     pkg.mainModule.bkeApp = this
 
     if pkg.mainModule.backend
-      pkg.mainModule.backend({@app})
+      router = express.Router()
+      pkg.mainModule.backend({@app, express, router})
+      if pkg.mountpoint
+        console.log "app mount #{pkg.mountpoint}"
+        @app.use(pkg.mountpoint, router)
+
+        console.log "app", @app
 
     @packages.push pkg
 
