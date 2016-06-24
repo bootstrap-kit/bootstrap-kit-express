@@ -91,6 +91,11 @@ class BootstrapKitExpressApp
       bare: false
       header: true
 
+    # add deps transformation as suggested in http://stackoverflow.com/questions/17881692/get-coffee-script-dependency-tree-with-browserify
+
+    bundle.deps
+      transform: coffeeify
+
     bundle.add frontendCoffeeFile
 
     console.log "create bundle"
