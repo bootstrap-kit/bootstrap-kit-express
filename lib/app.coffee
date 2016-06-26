@@ -89,6 +89,7 @@ class BootstrapKitExpressApp
     bundle.transform coffeeify,
       bare: false
       header: true
+      global: true
 
     # add deps transformation as suggested in http://stackoverflow.com/questions/17881692/get-coffee-script-dependency-tree-with-browserify
 
