@@ -30,10 +30,9 @@ class BootstrapKitExpressApp
     @app.locals.cssList = []
     @app.locals.host = host = opts.host or 'localhost'
     @app.locals.port = port = opts.port or 3001
-    @app.locals.baseURL = baseURL = opts.baseURL or "http://#{host}:#{port}"
+    @app.locals.baseURL = baseURL = opts.baseURL or "/"
 
     @app.use morgan 'combined'
-
 
     if opts.middleware
       for middleware in opts.middleware
@@ -92,9 +91,6 @@ class BootstrapKitExpressApp
       header: true
 
     # add deps transformation as suggested in http://stackoverflow.com/questions/17881692/get-coffee-script-dependency-tree-with-browserify
-
-    bundle.deps
-      transform: coffeeify
 
     bundle.add frontendCoffeeFile
 
